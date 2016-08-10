@@ -600,7 +600,7 @@ public class TopicPartitionWriter {
     Future<Void> future = executorService.submit(new Callable<Void>() {
       @Override
       public Void call() throws HiveMetaStoreException {
-        hive.alterSchema(hiveDatabase, tp.topic(), currentSchema);
+        hive.alterSchema(hiveDatabase, hive.tableNameForTopicName(tp.topic()), currentSchema);
         return null;
       }
     });
@@ -611,7 +611,7 @@ public class TopicPartitionWriter {
     Future<Void> future = executorService.submit(new Callable<Void>() {
       @Override
       public Void call() throws Exception {
-        hiveMetaStore.addPartition(hiveDatabase, tp.topic(), location);
+        hiveMetaStore.addPartition(hiveDatabase, hive.tableNameForTopicName(tp.topic()), location);
         return null;
       }
     });
