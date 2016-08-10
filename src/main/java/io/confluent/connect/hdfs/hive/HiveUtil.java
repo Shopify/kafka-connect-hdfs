@@ -38,4 +38,9 @@ public abstract class HiveUtil {
   public abstract void createTable(String database, String tableName, Schema schema, Partitioner partitioner);
 
   public abstract void alterSchema(String database, String tableName, Schema schema);
+
+
+  public String tableNameForTopicName(String topicName) {
+    return topicName.replaceAll("[\\.-]", "_");
+  }
 }

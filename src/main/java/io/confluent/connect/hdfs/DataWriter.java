@@ -247,19 +247,20 @@ public class DataWriter {
 
     try {
       for (String topic: topics) {
+        String tableName = hive.tableNameForTopicName(topic);
         String topicDir = FileUtils.topicDirectory(url, topicsDir, topic);
         CommittedFileFilter filter = new TopicCommittedFileFilter(topic);
         FileStatus fileStatusWithMaxOffset = FileUtils.fileStatusWithMaxOffset(storage, new Path(topicDir), filter);
         if (fileStatusWithMaxOffset != null) {
           Schema latestSchema = schemaFileReader.getSchema(conf, fileStatusWithMaxOffset.getPath());
           hive.createTable(hiveDatabase, topic, latestSchema, partitioner);
-          List<String> partitions = hiveMetaStore.listPartitions(hiveDatabase, topic, (short) -1);
+          List<String> partitions = hiveMetaStore.listPartitions(hiveDatabase, tableName, (short) -1);
           FileStatus[] statuses = FileUtils.getDirectories(storage, new Path(topicDir));
           for (FileStatus status : statuses) {
             String location = status.getPath().toString();
             if (!partitions.contains(location)) {
               String partitionValue = getPartitionValue(location);
-              hiveMetaStore.addPartition(hiveDatabase, topic, partitionValue);
+              hiveMetaStore.addPartition(hiveDatabase, tableName, partitionValue);
             }
           }
         }
