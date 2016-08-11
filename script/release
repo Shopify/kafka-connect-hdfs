@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+mvn package -DskipTests
+
+find $PWD/target -maxdepth 1 -name 'kafka-connect-hdfs-*.jar' -exec aws s3 cp '{}' s3://shopify-kafka-connect/ ';'
