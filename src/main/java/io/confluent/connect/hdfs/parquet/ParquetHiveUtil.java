@@ -54,11 +54,12 @@ public class ParquetHiveUtil extends HiveUtil {
     hiveMetaStore.alterTable(table);
   }
 
-  private Table constructParquetTable(String database, String tableName, Schema schema, Partitioner partitioner) throws HiveMetaStoreException {
+  private Table constructParquetTable(String database, String topicName, Schema schema, Partitioner partitioner) throws HiveMetaStoreException {
+    String tableName = tableNameForTopicName(topicName);
     Table table = new Table(database, tableName);
     table.setTableType(TableType.EXTERNAL_TABLE);
     table.getParameters().put("EXTERNAL", "TRUE");
-    String tablePath = FileUtils.hiveDirectoryName(url, topicsDir, tableName);
+    String tablePath = FileUtils.hiveDirectoryName(url, topicsDir, topicName);
     table.setDataLocation(new Path(tablePath));
     table.setSerializationLib(getHiveParquetSerde());
     try {
